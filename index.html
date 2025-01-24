@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleta Russa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .shots-remaining {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Roleta Russa</h1>
+  <button id="spinButton">Girar Roleta</button>
+  <div class="shots-remaining" id="shotsRemaining">Tiros restantes: 6</div>
+  <div class="result" id="result"></div>
+
+  <script>
+    let shots = 6; // Limite de tiros
+    const bulletPosition = Math.floor(Math.random() * 6) + 1; // Posição fixa da bala (1-6)
+
+    document.getElementById('spinButton').addEventListener('click', () => {
+      if (shots > 0) {
+        shots--; // Reduz um tiro
+        const playerShot = shots + 1; // Simula um tiro diferente a cada jogada
+
+        const resultElement = document.getElementById('result');
+        const shotsRemainingElement = document.getElementById('shotsRemaining');
+
+        if (playerShot === bulletPosition) {
+          resultElement.textContent = "Você perdeu! 💥";
+          resultElement.style.color = 'red';
+          document.getElementById('spinButton').disabled = true; // Desativa o botão
+        } else if (shots === 0) {
+          resultElement.textContent = "Você sobreviveu a todos os tiros! 🎉";
+          resultElement.style.color = 'green';
+          document.getElementById('spinButton').disabled = true; // Desativa o botão
+        } else {
+          resultElement.textContent = "Você sobreviveu! 🎉";
+          resultElement.style.color = 'green';
+        }
+
+        // Atualiza tiros restantes
+        shotsRemainingElement.textContent = `Tiros restantes: ${shots}`;
+      }
+    });
+  </script>
+</body>
+</html>
