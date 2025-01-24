@@ -4,178 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roleta Russa</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4; /* Cor de fundo inicial */
-      color: #000; /* Cor de texto inicial */
-      transition: background-color 0.3s, color 0.3s; /* Transição suave */
-    }
-    h1 {
-      font-size: 2rem;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s; /* Transição suave de cor */
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .result {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    .shots-remaining {
-      margin-top: 10px;
-      font-size: 1rem;
-      color: #555;
-    }
-    footer {
-      position: absolute;
-      bottom: 10px;
-      font-size: 1rem;
-      color: #333;
-    }
-    /* Estilos para os botões de tema */
-    #themeSelection button {
-      padding: 5px 10px;
-      font-size: 0.9rem;
-      margin: 5px;
-      border-radius: 5px;
-      border: 1px solid #007bff;
-      cursor: pointer;
-      background-color: #f0f0f0;
-      color: #000; /* Garantir que o texto seja visível */
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    #themeSelection button:hover {
-      background-color: #e0e0e0;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Roleta Russa</h1>
-  <button id="spinButton">Girar Roleta</button>
-  <div class="shots-remaining" id="shotsRemaining">Tiros restantes: 6</div>
-  <div class="result" id="result"></div>
+  <div class="center-content">
+    <h1>Roleta Russa</h1>
+    <button id="spinButton">Girar Roleta</button>
+    <div class="shots-remaining" id="shotsRemaining">Tiros restantes: 6</div>
+    <div class="result" id="result"></div>
+    
+    <!-- Som de tiro -->
+    <audio id="shotSound" src="tiro.mp3" preload="auto"></audio>
 
-  <!-- Som de tiro -->
-  <audio id="shotSound" src="tiro.mp3" preload="auto"></audio>
+    <!-- Botão de alterar tema -->
+    <button id="themeButton" onclick="toggleTheme()">Alterar Tema</button>
 
-  <div id="themeSelection">
-    <button onclick="changeTheme('light')">Tema Claro</button>
-    <button onclick="changeTheme('dark')">Tema Escuro</button>
+    <!-- Botão de refresh -->
+    <button id="refreshButton" onclick="refreshGame()">Jogar novamente</button>
   </div>
 
-  <script>
-    // Definições do jogo
-    let shots = 6; // Limite de tiros
-    const bulletPosition = Math.floor(Math.random() * 6) + 1; // Posição fixa da bala (1-6)
+  <footer>Feito por João Amaral</footer>
 
-    // Temas
-    const lightTheme = {
-      backgroundColor: '#f4f4f4',
-      buttonColor: '#007bff',
-      textColor: '#000',
-      buttonBackgroundColor: '#007bff',
-      buttonHoverColor: '#0056b3',
-      resultTextColor: '#000',
-      footerTextColor: '#333',
-      buttonTextColor: '#fff' // Cor do texto no botão no tema claro
-    };
-
-    const darkTheme = {
-      backgroundColor: '#333',
-      buttonColor: '#444',
-      textColor: '#fff',
-      buttonBackgroundColor: '#444',
-      buttonHoverColor: '#555',
-      resultTextColor: '#fff',
-      footerTextColor: '#ccc',
-      buttonTextColor: '#fff' // Cor do texto no botão no tema escuro
-    };
-
-    // Função para mudar o tema
-    function changeTheme(theme) {
-      const selectedTheme = theme === 'light' ? lightTheme : darkTheme;
-      document.body.style.backgroundColor = selectedTheme.backgroundColor;
-      document.body.style.color = selectedTheme.textColor;
-      document.getElementById('spinButton').style.backgroundColor = selectedTheme.buttonBackgroundColor;
-      document.getElementById('spinButton').style.color = selectedTheme.buttonTextColor; // Texto do botão
-      document.getElementById('spinButton').style.transition = 'background-color 0.3s, color 0.3s'; // Transição suave para o texto
-      document.querySelectorAll('button').forEach(button => {
-        button.style.backgroundColor = selectedTheme.buttonBackgroundColor;
-        button.style.color = selectedTheme.buttonTextColor; // Texto dos botões
-      });
-      document.querySelectorAll('button').forEach(button => {
-        button.onmouseover = function () {
-          button.style.backgroundColor = selectedTheme.buttonHoverColor;
-        };
-        button.onmouseout = function () {
-          button.style.backgroundColor = selectedTheme.buttonBackgroundColor;
-        };
-      });
-      document.getElementById('result').style.color = selectedTheme.resultTextColor;
-      document.querySelector('footer').style.color = selectedTheme.footerTextColor;
-    }
-
-    // Função para ativar a vibração em dispositivos móveis
-    function vibrateOnMobile() {
-      if (navigator.vibrate) {
-        navigator.vibrate(1000); // Vibra por 1 segundo
-      }
-    }
-
-    // Função de click no botão
-    document.getElementById('spinButton').addEventListener('click', () => {
-      if (shots > 0) {
-        shots--; // Reduz um tiro
-        const playerShot = shots + 1; // Simula um tiro diferente a cada jogada
-
-        const resultElement = document.getElementById('result');
-        const shotsRemainingElement = document.getElementById('shotsRemaining');
-
-        const shotSound = document.getElementById('shotSound');
-
-        if (playerShot === bulletPosition) {
-          resultElement.textContent = "Você perdeu! 💥";
-          resultElement.style.color = 'red';
-          shotSound.play(); // Som de tiro
-          vibrateOnMobile(); // Vibração para dispositivos móveis
-          document.getElementById('spinButton').disabled = true; // Desativa o botão
-        } else {
-          resultElement.textContent = "Você sobreviveu! 🎉";
-          resultElement.style.color = 'green';
-        }
-
-        // Atualiza tiros restantes
-        shotsRemainingElement.textContent = `Tiros restantes: ${shots}`;
-
-        // Desativa o botão após o último tiro ou perda
-        if (shots === 0) {
-          document.getElementById('spinButton').disabled = true;
-        }
-      }
-    });
-
-    // Inicializa com tema claro
-    changeTheme('light');
-  </script>
-
-  <!-- Footer -->
-  <footer>Made by João Amaral</footer>
+  <script src="script.js"></script>
 </body>
 </html>
